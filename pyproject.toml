@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "cleanobs"
+version = "0.1.0"
+description = ""
+authors = ["Panos Mavrogiorgos <pmav99@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+datashader = "*"
+holoviews = "*"
+hvplot = "*"
+multifutures = "*"
+natsort = "*"
+numpy = "*"
+pandas = "*"
+panel = "*"
+pydantic = "*"
+pydantic-settings = "*"
+searvey = {git = "https://github.com/oceanmodeling/searvey.git", rev = "dev"}
+utide = "*"
+pyarrow = "*"
+sortedcontainers-pydantic = "*"
+bokeh = "*"
+
+[tool.poetry.group.dev.dependencies]
+covdefaults = "*"
+coverage = {version = "*", extras = ["toml"]}
+devtools = "*"
+ipdb = "*"
+ipykernel = "*"
+ipywidgets = "*"
+mypy = "*"
+pandas-stubs = "*"
+pytest = ">=7.0"
+pytest-cov = ">=3"
+tqdm = {version = "*", extras = ["notebook"]}
+wat-inspector = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
