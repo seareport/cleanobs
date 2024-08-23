@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     def era5_dir(self) -> pathlib.Path:
         return self.data_dir / "era5"
 
+    @pydantic.computed_field
+    @property
+    def constituents_dir(self) -> pathlib.Path:
+        return self.data_dir / "const"
+
 
 def get_settings():
     settings = Settings()

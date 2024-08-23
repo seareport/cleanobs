@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import pathlib
 import typing as T
 import zoneinfo
 from collections.abc import Iterable
@@ -9,6 +10,8 @@ from collections.abc import Sequence
 import pandas as pd
 import pydantic
 from sortedcontainers_pydantic import SortedSet
+
+from ._settings import get_settings
 
 
 def ensure_utc(dt: datetime.datetime) -> datetime.datetime:
@@ -85,3 +88,10 @@ class Transformation(pydantic.BaseModel):
     def add_tsunami(self, start: UTC, end: UTC) -> None:
         validated = self._ta_tsunami.validate_python({"start": start, "end":end})
         self.tsunamis.add(validated)
+
+    @pydantic.computed_field
+    @property
+    def path(self) -> pathlib.Path:
+        return pathlib.Path(
+            f"{get_settings().trans_dir}/{self.provider}-{self.provider_id}-{self.sensor}.json"
+        )

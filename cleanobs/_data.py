@@ -97,7 +97,7 @@ def dump_trans(
     path: os.PathLike[str] | None = None,
 ) -> None:
     if path is None:
-        path = f"{get_settings().trans_dir}/{trans.provider.lower()}-{trans.provider_id}-{trans.sensor}.json"
+        path = trans.path
     with open(path, "w") as fd:
         fd.write(trans.model_dump_json(indent=2, round_trip=True))
         fd.write("\n")
@@ -109,7 +109,8 @@ def transform(df: pd.DataFrame, trans: Transformation | None = None) -> pd.DataF
     df = df.assign(clean=df.raw, timestamps=nan, date_ranges=nan, tsunamis=nan)
     if trans is None:
         attrs = df.attrs
-        trans = load_trans(f"{attrs['provider']}-{attrs['provider_id']}-{attrs['sensor']}".lower())
+        unique_id = f"{attrs['provider']}-{attrs['provider_id']}-{attrs['sensor']}"
+        trans = load_trans(unique_id)
     df = df[trans.start:trans.end]  # type: ignore[misc]  # https://stackoverflow.com/questions/70763542/pandas-dataframe-mypy-error-slice-index-must-be-an-integer-or-none
     if trans.timestamps and df.index.isin(trans.timestamps).any():
         index = df.index[df.index.isin(trans.timestamps)]
@@ -122,3 +123,10 @@ def transform(df: pd.DataFrame, trans: Transformation | None = None) -> pd.DataF
         df.loc[date_range.start:date_range.end, "tsunamis"] = df.loc[date_range.start:date_range.end, "raw"]
         df.loc[date_range.start:date_range.end, "clean"] = nan
     return df
+
+
+def load(unique_id: str) -> pd.DataFrame:
+    raw_df = load_raw(unique_id=unique_id)
+    trans = load_trans(unique_id=unique_id)
+    transformed_df = transform(df=raw_df, trans=trans)
+    return transformed_df

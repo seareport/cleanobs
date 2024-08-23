@@ -1,4 +1,5 @@
 import datetime
+import pathlib
 import zoneinfo
 
 import pandas as pd
@@ -33,6 +34,19 @@ def test_DateRange_from_tuple(start, end):
     expected = DateRange(start=pd.Timestamp("2010", tz="UTC"), end=pd.Timestamp("2011", tz="UTC"))
     instance = DateRange.from_tuple((start, end))
     assert instance == expected
+
+
+def test_transformation_path_property():
+    trans = Transformation(
+        provider="provider",
+        provider_id="provider_id",
+        sensor="na",
+        start=pd.Timestamp("2023"),
+        end=pd.Timestamp("2024"),
+    )
+    assert hasattr(trans, "path")
+    assert isinstance(trans.path, pathlib.Path)
+    assert trans.path.parent.parent == pathlib.Path("tests/data").resolve()
 
 
 @pytest.mark.parametrize(
