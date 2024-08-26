@@ -388,7 +388,11 @@ def compare(
     )
 
 
-def quick_plot(df):
+def quick_plot(df_or_unique_id: str | pd.DataFrame, column: str):
+    if isinstance(df_or_unique_id, str):
+        df = load(df_or_unique_id)[column]
+    else:
+        df = df_or_unique_id[column]
     if df.index.tz is not None:
         df.index = df.index.tz_convert(None)
     curve = hv.Curve(df)
