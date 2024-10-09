@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import typing as T
 
 import numpy as np
 import pandas as pd
@@ -32,17 +33,15 @@ def to_parquet(df: pd.DataFrame, path: os.PathLike[str] | str) -> None:
     )
 
 
-def load_raw_from_path(path: str | os.PathLike[str]) -> pd.DataFrame:
-    df = pd.read_parquet(path)
+def load_raw_from_path(path: str | os.PathLike[str], **kwargs: T.Any) -> pd.DataFrame:
+    df = pd.read_parquet(path, **kwargs)
     for key, type_ in _RAW_TYPE_CONVERSIONS.items():
         if key in df.attrs:
             df.attrs[key] = type_(df.attrs[key])
     return df
 
 
-def load_raw(
-    unique_id: str,
-) -> pd.DataFrame:
+def load_raw(unique_id: str, **kwargs: T.Any) -> pd.DataFrame:
     path = f"{get_settings().raw_dir}/{unique_id}.parquet"
     df = load_raw_from_path(path)
     return df
@@ -54,7 +53,7 @@ def load_era5(
     if unique_id.count("-") == 2:
         # The unique id is something like: `ioc-waka-rad`.
         # Nevertheless, the `sensor is not part of the ERA5 id so drop it
-        era5_id = unique_id.rsplit('-', 1)[0]
+        era5_id = unique_id.rsplit("-", 1)[0]
     else:
         era5_id = unique_id
     path = f"{get_settings().era5_dir}/{era5_id}.parquet"
@@ -111,22 +110,22 @@ def transform(df: pd.DataFrame, trans: Transformation | None = None) -> pd.DataF
         attrs = df.attrs
         unique_id = f"{attrs['provider']}-{attrs['provider_id']}-{attrs['sensor']}"
         trans = load_trans(unique_id)
-    df = df[trans.start:trans.end]  # type: ignore[misc]  # https://stackoverflow.com/questions/70763542/pandas-dataframe-mypy-error-slice-index-must-be-an-integer-or-none
+    df = df[trans.start : trans.end]  # type: ignore[misc]  # https://stackoverflow.com/questions/70763542/pandas-dataframe-mypy-error-slice-index-must-be-an-integer-or-none
     if trans.timestamps and df.index.isin(trans.timestamps).any():
         index = df.index[df.index.isin(trans.timestamps)]
         df.loc[index, "timestamps"] = df.loc[index, "raw"]
         df.loc[index, "clean"] = nan
     for date_range in trans.date_ranges:
-        df.loc[date_range.start:date_range.end, "date_ranges"] = df.loc[date_range.start:date_range.end, "raw"]
-        df.loc[date_range.start:date_range.end, "clean"] = nan
+        df.loc[date_range.start : date_range.end, "date_ranges"] = df.loc[date_range.start : date_range.end, "raw"]  # fmt: skip
+        df.loc[date_range.start : date_range.end, "clean"] = nan
     for date_range in trans.tsunamis:
-        df.loc[date_range.start:date_range.end, "tsunamis"] = df.loc[date_range.start:date_range.end, "raw"]
-        df.loc[date_range.start:date_range.end, "clean"] = nan
+        df.loc[date_range.start : date_range.end, "tsunamis"] = df.loc[date_range.start : date_range.end,"raw"]  # fmt: skip
+        df.loc[date_range.start : date_range.end, "clean"] = nan
     return df
 
 
-def load(unique_id: str) -> pd.DataFrame:
-    raw_df = load_raw(unique_id=unique_id)
+def load(unique_id: str, **kwargs: T.Any) -> pd.DataFrame:
+    raw_df = load_raw(unique_id=unique_id, **kwargs)
     trans = load_trans(unique_id=unique_id)
     transformed_df = transform(df=raw_df, trans=trans)
     return transformed_df

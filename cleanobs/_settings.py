@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import functools
 import os
 import pathlib
 
 import pydantic
-import pydantic_core
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
 

@@ -6,7 +6,7 @@ import typing as T
 import pandas as pd
 
 
-def calc_station_stats(df: pd.DataFrame, column: str="raw") -> dict[str, T.Any]:
+def calc_station_stats(df: pd.DataFrame, column: str = "raw") -> dict[str, T.Any]:
     sr = df[column]
     interval_value_counts = sr.index.to_series().diff().value_counts()
     main_interval_occurences = float(interval_value_counts.iloc[0])
@@ -29,8 +29,8 @@ def calc_station_stats(df: pd.DataFrame, column: str="raw") -> dict[str, T.Any]:
         f"{column}_max": sr.max(),
         f"{column}_range": abs(sr.max() - sr.min()),
         f"{column}_std": sr.std(),
-        f"{column}_skew": float(sr.skew()),
-        f"{column}_kurtosis": float(sr.kurtosis()),
+        f"{column}_skew": T.cast(float, sr.skew()),
+        f"{column}_kurtosis": T.cast(float, sr.kurtosis()),
     }
     return data
 

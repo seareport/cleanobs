@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import cleanobs as C
+
 
 def test_settings():
     settings = C.get_settings()

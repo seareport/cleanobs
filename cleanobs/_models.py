@@ -22,7 +22,11 @@ def ensure_utc(dt: datetime.datetime) -> datetime.datetime:
     return dt
 
 
-UTC = T.Annotated[datetime.datetime, pydantic.BeforeValidator(pd.Timestamp), pydantic.AfterValidator(ensure_utc)]
+UTC = T.Annotated[
+    datetime.datetime,
+    pydantic.BeforeValidator(pd.Timestamp),
+    pydantic.AfterValidator(ensure_utc),
+]
 
 
 _model_config = pydantic.ConfigDict(
@@ -64,7 +68,7 @@ class Transformation(pydantic.BaseModel):
     provider: str
     provider_id: str
     sensor: str
-    notes: str = ""
+    notes: list[str] = []
     skip: bool = True
     wip: bool = True
     start: UTC
@@ -74,11 +78,11 @@ class Transformation(pydantic.BaseModel):
     tsunamis: SortedSet[DateRange] = SortedSet()
 
     _ta_date_range = pydantic.TypeAdapter(DateRange)
-    _ta_timestamps = pydantic.TypeAdapter(Iterable[UTC])
+    _ta_timestamps = pydantic.TypeAdapter(Iterable[UTC])  # type: ignore[var-annotated]
     _ta_tsunami = pydantic.TypeAdapter(DateRange)
 
     def add_date_range(self, start: UTC, end: UTC) -> None:
-        validated = self._ta_date_range.validate_python({"start": start, "end":end})
+        validated = self._ta_date_range.validate_python({"start": start, "end": end})
         self.date_ranges.add(validated)
 
     def add_timestamps(self, timestamps: Iterable[UTC]) -> None:
@@ -86,12 +90,32 @@ class Transformation(pydantic.BaseModel):
         self.timestamps.update(validated)
 
     def add_tsunami(self, start: UTC, end: UTC) -> None:
-        validated = self._ta_tsunami.validate_python({"start": start, "end":end})
+        validated = self._ta_tsunami.validate_python({"start": start, "end": end})
         self.tsunamis.add(validated)
 
-    @pydantic.computed_field
+    @pydantic.computed_field  # type: ignore[prop-decorator]
     @property
     def path(self) -> pathlib.Path:
         return pathlib.Path(
-            f"{get_settings().trans_dir}/{self.provider}-{self.provider_id}-{self.sensor}.json"
+            f"{get_settings().trans_dir}/{self.provider}-{self.provider_id}-{self.sensor}.json",
         )
+
+
+class ConstituentsDiagnostics(pydantic.BaseModel):
+    model_config = _model_config
+
+    names: list[str]
+    percent_energy: list[float]
+    snr: list[float]
+
+
+class Constituents(pydantic.BaseModel):
+    model_config = _model_config
+
+    names: list[str]
+    amplitude: list[str]
+    amplitude_ci: list[str]
+    greenwich: list[str]
+    greenwich_ci: list[str]
+    mean: float
+    slope: float | None = None

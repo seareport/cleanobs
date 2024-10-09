@@ -2,9 +2,9 @@
   "provider": "ioc",
   "provider_id": "abas",
   "sensor": "rad",
-  "notes": "",
-  "skip": true,
-  "wip": true,
+  "notes": [],
+  "skip": false,
+  "wip": false,
   "start": "2012-03-21T23:43:00Z",
   "end": "2024-08-01T00:00:00Z",
   "date_ranges": [

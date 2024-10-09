@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import pathlib
 import zoneinfo
@@ -27,13 +29,33 @@ def test_UTC():
         pytest.param("2010", "2011", id="YYYY"),
         pytest.param("2010-01-01", "2011-01-01", id="YYYY-MM-DD"),
         pytest.param(pd.Timestamp("2010"), pd.Timestamp("2011"), id="pd.Timestamp naive"),
-        pytest.param(pd.Timestamp("2010", tz="UTC"), pd.Timestamp("2011", tz="UTC"), id="pd.Timestamp timezone-aware"),
+        pytest.param(
+            pd.Timestamp("2010", tz="UTC"),
+            pd.Timestamp("2011", tz="UTC"),
+            id="pd.Timestamp timezone-aware",
+        ),
     ],
 )
 def test_DateRange_from_tuple(start, end):
     expected = DateRange(start=pd.Timestamp("2010", tz="UTC"), end=pd.Timestamp("2011", tz="UTC"))
     instance = DateRange.from_tuple((start, end))
     assert instance == expected
+
+
+def test_transformation_notes():
+    notes = ["AAA", "BBB"]
+    trans = Transformation(
+        provider="provider",
+        provider_id="provider_id",
+        sensor="na",
+        start=pd.Timestamp("2023"),
+        end=pd.Timestamp("2024"),
+        notes=notes,
+    )
+    assert hasattr(trans, "notes")
+    assert isinstance(trans.notes, list)
+    assert len(trans.notes) == len(notes)
+    assert trans.notes == notes
 
 
 def test_transformation_path_property():

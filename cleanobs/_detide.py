@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 import pathlib
@@ -5,7 +7,7 @@ import typing as T
 
 import numpy as np
 import pandas as pd
-import utide
+import utide  # type: ignore[import-untyped]
 
 from ._settings import get_settings
 
@@ -67,8 +69,8 @@ def calc_surge(df: pd.DataFrame, const: dict[str, T.Any], prefix: str = "utide",
         kwargs["verbose"] = False
     # utide throws warnings if datetime aware timestamps are being used.
     # Let's ensure that we are on UTC and drop the timezone
-    assert str(df.index.tz) == "UTC"
-    df.index = df.index.tz_convert(None)
+    assert str(df.index.tz) == "UTC"  # type: ignore[attr-defined]
+    df.index = df.index.tz_convert(None)  # type: ignore[attr-defined]
     reconstructed = utide.reconstruct(df.index, const, **kwargs)
     tide_df = pd.DataFrame({"tide": reconstructed["h"]}, index=reconstructed["t_in"])
     df = df.assign(**{prefix: tide_df.reindex(df.index).tide})

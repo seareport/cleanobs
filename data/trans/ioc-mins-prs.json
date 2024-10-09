@@ -1,0 +1,13 @@
+{
+  "provider": "ioc",
+  "provider_id": "mins",
+  "sensor": "prs",
+  "notes": [],
+  "skip": true,
+  "wip": false,
+  "start": "2012-03-21T23:43:00Z",
+  "end": "2024-08-01T00:00:00Z",
+  "date_ranges": [],
+  "timestamps": [],
+  "tsunamis": []
+}

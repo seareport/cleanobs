@@ -2,9 +2,9 @@
   "provider": "IOC",
   "provider_id": "waka",
   "sensor": "rad",
-  "notes": "",
-  "skip": true,
-  "wip": true,
+  "notes": [],
+  "skip": false,
+  "wip": false,
   "start": "2012-03-22T06:43:00Z",
   "end": "2024-08-01T00:00:00Z",
   "date_ranges": [
