@@ -6,7 +6,8 @@ authors = ["Panos Mavrogiorgos <pmav99@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
+dask = {version = "*", extras = ["array", "dataframe", "diagnostics", "distributed", "complete"]}
 datashader = "*"
 holoviews = "*"
 hvplot = "*"
@@ -22,6 +23,12 @@ utide = "*"
 pyarrow = "*"
 sortedcontainers-pydantic = "*"
 bokeh = "*"
+ciso8601 = "*"
+pyextremes = "*"
+saqc = "*"
+scikit-learn = "*"
+threadpoolctl = "*"
+xarray = "*"
 
 [tool.poetry.group.dev.dependencies]
 covdefaults = "*"
@@ -36,6 +43,7 @@ pytest = ">=7.0"
 pytest-cov = ">=3"
 tqdm = {version = "*", extras = ["notebook"]}
 wat-inspector = "*"
+ipython = "*"
 
 [build-system]
 requires = ["poetry-core"]
